@@ -1,0 +1,31 @@
+from datetime import datetime
+import pytz
+
+def GetGMTDateTime(region, city_name, local_datetime):
+    # Convert local_datetime to a datetime object
+    local_dt = datetime.strptime(local_datetime, "%Y-%m-%d %H:%M:%S")
+
+    # Get the timezone for the given city name
+    try:
+        tz = pytz.timezone(f'{region}/{city_name}')
+    except pytz.UnknownTimeZoneError:
+        return "Invalid city name"
+
+    # Localize the datetime object to the given timezone
+    local_dt = tz.localize(local_dt)
+
+    # Convert the localized datetime to GMT/UTC
+    gmt_dt = local_dt.astimezone(pytz.utc)
+
+    # Format the GMT datetime as a string
+    gmt_datetime = gmt_dt.strftime("%Y-%m-%d %H:%M:%S")
+    
+    return gmt_datetime
+
+
+if __name__ == '__main__':
+    departureCity = 'Hamburg'
+    temp = '2023-11-29T07:00:00'
+    departureDatetime = GetGMTDateTime('Europe',departureCity, str(datetime.strptime(temp, '%Y-%m-%dT%H:%M:%S')))
+    print(f'departureDatetime: {departureDatetime}')
+                            
